@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1050" role="img" aria-label="Minecraft thumbnail collage">
+  <defs>
+    <filter id="shadow"><feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#000" flood-opacity=".7"/></filter>
+    <linearGradient id="red" x1="0" x2="1"><stop stop-color="#ef1d1d"/><stop offset="1" stop-color="#facc15"/></linearGradient>
+  </defs>
+  <rect width="1500" height="1050" fill="#050505"/>
+  <g filter="url(#shadow)">
+    <g transform="translate(110 90) rotate(-7)">
+      <rect width="560" height="315" rx="24" fill="#163b22"/>
+      <rect y="205" width="560" height="110" fill="#6b452a"/>
+      <circle cx="415" cy="122" r="80" fill="#36d15f"/>
+      <text x="280" y="90" fill="#fff" stroke="#000" stroke-width="10" paint-order="stroke" font-family="Arial Black, Arial" font-size="58" text-anchor="middle">DIAMONDS?</text>
+      <path d="M285 205l95-45" stroke="#facc15" stroke-width="26" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(720 120) rotate(8)">
+      <rect width="610" height="343" rx="24" fill="#173763"/>
+      <rect y="230" width="610" height="113" fill="#2f2018"/>
+      <rect x="120" y="85" width="120" height="120" fill="#d49a68"/>
+      <text x="375" y="150" fill="#ff3434" stroke="#000" stroke-width="11" paint-order="stroke" font-family="Arial Black, Arial" font-size="72" text-anchor="middle">NO DELAY!</text>
+    </g>
+    <g transform="translate(245 500) rotate(5)">
+      <rect width="610" height="343" rx="24" fill="#402020"/>
+      <rect y="230" width="610" height="113" fill="#8a5a38"/>
+      <rect x="385" y="95" width="135" height="135" fill="#6b452a"/>
+      <text x="290" y="160" fill="#facc15" stroke="#000" stroke-width="12" paint-order="stroke" font-family="Arial Black, Arial" font-size="80" text-anchor="middle">FAST FARM</text>
+    </g>
+    <g transform="translate(880 560) rotate(-5)">
+      <rect width="500" height="281" rx="24" fill="#0f3f46"/>
+      <rect y="190" width="500" height="91" fill="#31522e"/>
+      <polygon points="330,70 410,130 330,190 250,130" fill="#38dff8"/>
+      <text x="220" y="145" fill="#fff" stroke="#000" stroke-width="10" paint-order="stroke" font-family="Arial Black, Arial" font-size="64" text-anchor="middle">OP LOOT</text>
+    </g>
+  </g>
+  <rect width="1500" height="1050" fill="url(#red)" opacity=".08"/>
+</svg>

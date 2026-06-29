@@ -1,0 +1,129 @@
+:root {
+  --color-bg: #050505;
+  --color-bg-app: #0b0d10;
+  --color-bg-soft: #0b0d10;
+  --color-bg-elevated: #111318;
+  --color-bg-field: #15171d;
+  --color-bg-raised: #181b22;
+  --color-bg-muted: #12151b;
+  --color-bg-row: #14161c;
+  --color-bg-row-hover: #1c1f27;
+  --color-bg-row-selected: #1a1214;
+  --color-bg-overlay: #0a0a0a;
+  --color-surface: #111318;
+  --color-surface-solid: #111318;
+  --color-panel: #15171d;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.2);
+  --color-text: #f8fafc;
+  --color-text-muted: #a5adba;
+  --color-text-faint: #707887;
+  --color-primary: #ef1d1d;
+  --color-primary-hover: #ff3434;
+  --color-primary-soft: rgba(239, 29, 29, 0.14);
+  --color-minecraft-green: #36d15f;
+  --color-dirt: #8a5a38;
+  --color-gold: #facc15;
+  --color-diamond: #38dff8;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-required: #b88484;
+
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --font-weight-body: var(--font-weight-regular);
+  --font-weight-ui: var(--font-weight-medium);
+  --font-weight-heading: var(--font-weight-bold);
+  --font-weight-eyebrow: var(--font-weight-semibold);
+
+  --text-xs: 0.78rem;
+  --text-sm: 0.88rem;
+  --text-base: 1rem;
+  --text-md: 1.08rem;
+  --text-lg: 1.16rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.4rem;
+
+  --leading-none: 1;
+  --leading-tight: 0.96;
+  --leading-snug: 1.02;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.55;
+
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.08em;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+  --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.34);
+  --shadow-lg: 0 24px 90px rgba(0, 0, 0, 0.56);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --container-xl: 1200px;
+  --container-2xl: 1440px;
+  --transition-fast: 120ms ease;
+  --transition-base: 180ms ease;
+  --transition-slow: 280ms ease;
+
+  /* Preserved translucent / gradient aesthetic (optional: .bg-gradient-body, .glass, Card tone="glass") */
+  --bg-gradient-body:
+    radial-gradient(circle at 20% 0%, rgba(239, 29, 29, 0.12), transparent 30rem),
+    radial-gradient(circle at 85% 10%, rgba(56, 223, 248, 0.08), transparent 28rem),
+    linear-gradient(180deg, #050505 0%, #090a0d 46%, #050505 100%);
+  --color-surface-glass: rgba(17, 19, 24, 0.86);
+  --field-bg-glass: rgba(0, 0, 0, 0.2);
+  --glass-blur: blur(18px);
+
+  /* Generate input field system */
+  --field-border: rgba(255, 255, 255, 0.1);
+  --field-border-focus: rgba(239, 29, 29, 0.65);
+  --field-bg: var(--color-bg-field);
+  --field-radius: var(--radius-md);
+  --field-padding-compact: 0.4rem 0.55rem;
+  --field-padding-inset: 0.65rem 0.75rem;
+  --field-row-height: 1.375rem;
+  --field-min-height-compact: calc(0.4rem * 2 + 1.375rem);
+  --field-gap-inline: 0.35rem 0.5rem;
+  --field-gap-inset: 0.5rem;
+  --field-control-size: 0.7rem;
+  --field-textarea-lines: 4;
+  --field-textarea-line-height: 1.45;
+  --field-textarea-height: calc(1em * var(--field-textarea-line-height) * var(--field-textarea-lines));
+  --field-focus-ring: 0 0 0 3px rgba(239, 29, 29, 0.14);
+  --field-label-required: var(--color-required);
+  --field-composer-label-color: var(--color-text);
+  --field-composer-label-meta-color: var(--color-text-faint);
+  --field-action-color: var(--color-diamond);
+  --field-action-color-hover: var(--color-text);
+  --field-grid-gap: 0.75rem;
+
+  /* Section surfaces */
+  --surface-bg: var(--color-surface-solid);
+  --surface-shadow: var(--shadow-sm);
+}
