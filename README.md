@@ -2,6 +2,16 @@
 
 MineThumb is a SvelteKit + Supabase SaaS for generating clickable Minecraft YouTube thumbnails with AI.
 
+## Preview
+
+| Landing page | Pricing |
+| --- | --- |
+| ![MineThumb landing page](./static/images/readme-screenshot-landing.png) | ![MineThumb pricing page](./static/images/readme-screenshot-pricing.png) |
+
+Example thumbnail style (sample outputs):
+
+![Example Minecraft YouTube thumbnail collage](./static/images/readme-hero-collage.jpg)
+
 ## Stack
 
 - SvelteKit + TypeScript
