@@ -6,7 +6,8 @@ MineThumb is a SvelteKit + Supabase SaaS for generating clickable Minecraft YouT
 
 - SvelteKit + TypeScript
 - Supabase Auth, Postgres, Storage, Edge Functions
-- OpenAI Images API from Supabase Edge Functions only
+- OpenAI Images API from a Google Cloud Function worker
+- Google Cloud Tasks for long-running generation jobs
 - Stripe Checkout and webhooks
 - Vercel frontend deployment
 
@@ -14,15 +15,12 @@ MineThumb is a SvelteKit + Supabase SaaS for generating clickable Minecraft YouT
 
 ```bash
 npm install
-cp .env.example .env
 npm run dev
 ```
 
 Open `http://localhost:5173`.
 
-The UI works without live credentials for design/development. Auth, storage, generation, and billing need Supabase, OpenAI, and Stripe values.
-
-**Hosted Supabase + Stripe:** see [docs/HOSTED_SETUP.md](docs/HOSTED_SETUP.md). Fill in `.env` at the project root, then run `./scripts/setup-hosted.sh`.
+The UI works without live credentials for design/development. Auth, storage, generation, and billing need Supabase, OpenAI, Google Cloud, and Stripe values configured locally (`.env` is gitignored and never committed).
 
 ## Supabase Setup (local alternative)
 
@@ -38,8 +36,8 @@ Set these Supabase function secrets:
 
 ```bash
 supabase secrets set OPENAI_API_KEY=...
-supabase secrets set IMAGE_MODEL=gpt-image-1
-supabase secrets set IMAGE_SIZE=1536x1024
+supabase secrets set IMAGE_MODEL=gpt-image-2
+supabase secrets set IMAGE_SIZE=1792x1008
 supabase secrets set IMAGE_QUALITY=high
 supabase secrets set GENERATION_CREDIT_COST=1
 supabase secrets set STRIPE_SECRET_KEY=...
@@ -47,6 +45,12 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=...
 supabase secrets set STRIPE_PRO_PRICE_ID=...
 supabase secrets set STRIPE_CREATOR_PRICE_ID=...
 supabase secrets set SITE_URL=http://localhost:5173
+supabase secrets set GOOGLE_CLOUD_TASKS_PROJECT_ID=...
+supabase secrets set GOOGLE_CLOUD_TASKS_LOCATION=us-central1
+supabase secrets set GOOGLE_CLOUD_TASKS_QUEUE=thumbnail-generation
+supabase secrets set GOOGLE_CLOUD_TASKS_SERVICE_ACCOUNT_JSON='...'
+supabase secrets set GOOGLE_GENERATION_FUNCTION_URL=...
+supabase secrets set GOOGLE_GENERATION_FUNCTION_SECRET=...
 ```
 
 Migrations create:
@@ -81,10 +85,12 @@ Public env vars (`PUBLIC_*_PLAN_GENERATIONS`, `PUBLIC_*_PRICE_USD`) drive the pr
 2. Supabase Edge Function verifies the JWT.
 3. Function checks profile credits.
 4. Function builds a Minecraft thumbnail prompt.
-5. Function calls the OpenAI Images API.
-6. Result is stored in Supabase Storage.
-7. Generation is marked completed.
-8. Credits are deducted only after success.
+5. Function enqueues a Google Cloud Task and returns quickly.
+6. Cloud Tasks calls the Google Cloud Function worker.
+7. Worker calls the OpenAI Images API.
+8. Result is stored in Supabase Storage.
+9. Generation is marked completed.
+10. Credits are deducted only after success.
 
 ## Stripe Flow
 
@@ -113,10 +119,12 @@ supabase functions deploy cancel-subscription
 supabase functions deploy stripe-webhook
 ```
 
+Deploy `cloud-functions/generate-thumbnail` to Google Cloud Functions (Gen2), create the Cloud Tasks queue, and set the Google/Supabase/OpenAI worker secrets on both GCP and Supabase before enabling production generation.
+
 ## Current Limitations
 
-- Reference-image-to-image support is scaffolded at the data level, but the first function uses text-to-image generation.
-- Generation uses OpenAI `gpt-image-1` via Supabase Edge Functions. Reference images are sent with `/v1/images/edits` when uploaded.
+- Long-running image generation depends on Google Cloud Tasks and the deployed Google Cloud Function worker.
+- Reference images are sent with `/v1/images/edits` when uploaded.
 
 ## Future Improvements
 

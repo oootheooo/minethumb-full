@@ -66,10 +66,3 @@ begin
   return new;
 end;
 $$;
-
-update public.profiles
-set
-  first_name = 'Theodore',
-  last_name = 'Estadilla',
-  username = 'sleepingprince01'
-where email = 'thestadilla@gmail.com';

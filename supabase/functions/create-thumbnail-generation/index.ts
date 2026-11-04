@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { markGenerationFailed, runImageGenerationJob } from '../_shared/generation-job.ts';
+import { enqueueGenerationTask } from '../_shared/cloud-tasks.ts';
+import { markGenerationFailed } from '../_shared/generation-job.ts';
 import { buildHook, buildRecreatePrompt, buildThumbnailPrompt, mimeFromPath } from '../_shared/prompt.ts';
 import { corsHeaders, json } from '../_shared/cors.ts';
 
@@ -44,34 +45,28 @@ const attachInputAssets = async (
   }
 };
 
-const startBackgroundGeneration = (
-  admin: ReturnType<typeof createClient>,
+const startQueuedGeneration = async (
   input: {
     userId: string;
     generationId: string;
     prompt: string;
     assetPaths: AssetPaths;
-    openaiKey: string;
     imageModel: string;
     imageSize: string;
     imageQuality: string;
     creditCost: number;
   }
 ) => {
-  EdgeRuntime.waitUntil(
-    runImageGenerationJob({
-      admin,
-      userId: input.userId,
-      generationId: input.generationId,
-      prompt: input.prompt,
-      assetPaths: input.assetPaths,
-      openaiKey: input.openaiKey,
-      imageModel: input.imageModel,
-      imageSize: input.imageSize,
-      imageQuality: input.imageQuality,
-      creditCost: input.creditCost
-    })
-  );
+  await enqueueGenerationTask({
+    userId: input.userId,
+    generationId: input.generationId,
+    prompt: input.prompt,
+    assetPaths: input.assetPaths,
+    imageModel: input.imageModel,
+    imageSize: input.imageSize,
+    imageQuality: input.imageQuality,
+    creditCost: input.creditCost
+  });
 };
 
 Deno.serve(async (req) => {
@@ -81,9 +76,8 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const openaiKey = Deno.env.get('OPENAI_API_KEY');
-  const imageModel = Deno.env.get('IMAGE_MODEL') || 'gpt-image-1';
-  const imageSize = Deno.env.get('IMAGE_SIZE') || '1536x1024';
+  const imageModel = Deno.env.get('IMAGE_MODEL') || 'gpt-image-2';
+  const imageSize = Deno.env.get('IMAGE_SIZE') || '1792x1008';
   const imageQuality = Deno.env.get('IMAGE_QUALITY') || 'high';
   const creditCost = Number(Deno.env.get('GENERATION_CREDIT_COST') || '1');
 
@@ -170,27 +164,27 @@ Deno.serve(async (req) => {
 
     if (insertError || !generation) return json({ error: 'Could not create generation.' }, 500);
 
-    if (!openaiKey) {
-      await markGenerationFailed(admin, generation.id, 'OPENAI_API_KEY is not configured.');
-      return json({ error: 'OPENAI_API_KEY is not configured.' }, 500);
-    }
-
     await attachInputAssets(admin, user.id, generation.id, assetPaths);
 
-    startBackgroundGeneration(admin, {
-      userId: user.id,
-      generationId: generation.id,
-      prompt,
-      assetPaths: {
-        ...assetPaths,
-        source_thumbnail: sourceGeneration.output_image_path
-      },
-      openaiKey,
-      imageModel,
-      imageSize,
-      imageQuality,
-      creditCost
-    });
+    try {
+      await startQueuedGeneration({
+        userId: user.id,
+        generationId: generation.id,
+        prompt,
+        assetPaths: {
+          ...assetPaths,
+          source_thumbnail: sourceGeneration.output_image_path
+        },
+        imageModel,
+        imageSize,
+        imageQuality,
+        creditCost
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not queue generation.';
+      await markGenerationFailed(admin, generation.id, message);
+      return json({ error: message }, 500);
+    }
 
     return json({
       started: true,
@@ -277,11 +271,6 @@ Deno.serve(async (req) => {
       return json({ error: 'Generation is no longer pending.' }, 409);
     }
 
-    if (!openaiKey) {
-      await markGenerationFailed(admin, generation.id, 'OPENAI_API_KEY is not configured.');
-      return json({ error: 'OPENAI_API_KEY is not configured.' }, 500);
-    }
-
     await attachInputAssets(admin, user.id, generation.id, assetPaths);
 
     const hasSkin = Boolean(assetPaths.minecraft_skin);
@@ -297,17 +286,22 @@ Deno.serve(async (req) => {
 
     await admin.from('generations').update({ prompt }).eq('id', generation.id);
 
-    startBackgroundGeneration(admin, {
-      userId: user.id,
-      generationId: generation.id,
-      prompt,
-      assetPaths,
-      openaiKey,
-      imageModel,
-      imageSize,
-      imageQuality,
-      creditCost: generation.credit_cost
-    });
+    try {
+      await startQueuedGeneration({
+        userId: user.id,
+        generationId: generation.id,
+        prompt,
+        assetPaths,
+        imageModel,
+        imageSize,
+        imageQuality,
+        creditCost: generation.credit_cost
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not queue generation.';
+      await markGenerationFailed(admin, generation.id, message);
+      return json({ error: message }, 500);
+    }
 
     return json({
       started: true,

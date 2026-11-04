@@ -24,7 +24,7 @@
   const canDownload = $derived(hasImage && !isFailed);
 
   const displaySize = $derived(
-    (generation?.image_size || '1536x1024').replace(/x/i, '×')
+    (generation?.image_size || '1792x1008').replace(/x/i, '×')
   );
 
   const closeConfirm = () => {
